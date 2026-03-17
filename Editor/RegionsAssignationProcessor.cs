@@ -48,6 +48,14 @@ namespace RegionsAssignation.Editor
 
         private static readonly Regex whitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
 
+        private static readonly HashSet<string> csharpModifiers = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "public", "private", "protected", "internal",
+            "static", "readonly", "volatile", "const",
+            "sealed", "abstract", "virtual", "override",
+            "extern", "async", "unsafe", "new", "ref", "partial"
+        };
+
         private static readonly HashSet<string> unityLifecycleMethods = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Awake",
@@ -285,6 +293,7 @@ namespace RegionsAssignation.Editor
                     rule.Priority,
                     regionName,
                     rule.MemberKinds,
+                    rule.AccessKinds,
                     rule.MatchOverrideMethods,
                     rule.MatchUnityLifecycleMethods,
                     SplitTokens(rule.NameStartsWith),
@@ -533,6 +542,8 @@ namespace RegionsAssignation.Editor
                 typeName,
                 out string memberName);
 
+            RegionsAssignationAccessKind accessKind = DetermineAccessKind(normalizedSignature);
+
             bool isOverride = ContainsWord(normalizedSignature, "override");
             bool isUnityLifecycleMethod = memberKind == RegionsAssignationMemberKind.Method &&
                                           IsUnityLifecycleMethod(memberName);
@@ -542,6 +553,7 @@ namespace RegionsAssignation.Editor
             return new RegionsAssignationMemberInfo(
                 memberText,
                 memberKind,
+                accessKind,
                 memberName,
                 isOverride,
                 isUnityLifecycleMethod,
@@ -584,7 +596,7 @@ namespace RegionsAssignation.Editor
                 ? signature.Substring(0, assignmentIndex).TrimEnd()
                 : signature;
 
-            int parenthesisIndex = declarationSignature.IndexOf('(');
+            int parenthesisIndex = FindMethodParameterListIndex(declarationSignature);
             if (parenthesisIndex >= 0)
             {
                 memberName = ExtractMethodName(declarationSignature, parenthesisIndex);
@@ -652,6 +664,101 @@ namespace RegionsAssignation.Editor
             }
 
             return CleanIdentifier(nameToken);
+        }
+
+        private static int FindMethodParameterListIndex(string signature)
+        {
+            int parenthesisIndex = signature.IndexOf('(');
+            if (parenthesisIndex < 0)
+            {
+                return -1;
+            }
+
+            string beforeParen = signature.Substring(0, parenthesisIndex).Trim();
+            bool isTupleReturnType = beforeParen.Length == 0;
+
+            if (!isTupleReturnType)
+            {
+                string[] tokens = beforeParen.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                isTupleReturnType = tokens.Length > 0;
+                for (int index = 0; index < tokens.Length; index++)
+                {
+                    if (!csharpModifiers.Contains(tokens[index]))
+                    {
+                        isTupleReturnType = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!isTupleReturnType)
+            {
+                return parenthesisIndex;
+            }
+
+            int depth = 1;
+            int scan = parenthesisIndex + 1;
+            while (scan < signature.Length && depth > 0)
+            {
+                if (signature[scan] == '(')
+                {
+                    depth++;
+                }
+                else if (signature[scan] == ')')
+                {
+                    depth--;
+                }
+
+                scan++;
+            }
+
+            if (depth != 0)
+            {
+                return parenthesisIndex;
+            }
+
+            int nextParen = signature.IndexOf('(', scan);
+            return nextParen;
+        }
+
+        private static RegionsAssignationAccessKind DetermineAccessKind(string signature)
+        {
+            bool hasPublic = ContainsWord(signature, "public");
+            bool hasPrivate = ContainsWord(signature, "private");
+            bool hasProtected = ContainsWord(signature, "protected");
+            bool hasInternal = ContainsWord(signature, "internal");
+
+            if (hasProtected && hasInternal)
+            {
+                return RegionsAssignationAccessKind.ProtectedInternal;
+            }
+
+            if (hasPrivate && hasProtected)
+            {
+                return RegionsAssignationAccessKind.PrivateProtected;
+            }
+
+            if (hasPublic)
+            {
+                return RegionsAssignationAccessKind.Public;
+            }
+
+            if (hasPrivate)
+            {
+                return RegionsAssignationAccessKind.Private;
+            }
+
+            if (hasProtected)
+            {
+                return RegionsAssignationAccessKind.Protected;
+            }
+
+            if (hasInternal)
+            {
+                return RegionsAssignationAccessKind.Internal;
+            }
+
+            return RegionsAssignationAccessKind.Private;
         }
 
         private static string ExtractTrailingIdentifier(string signature, bool preferFirstVariable)
@@ -878,6 +985,11 @@ namespace RegionsAssignation.Editor
             }
 
             if (rule.MemberKinds != RegionsAssignationMemberKind.Any && !rule.MemberKinds.HasFlag(member.Kind))
+            {
+                return false;
+            }
+
+            if (rule.AccessKinds != RegionsAssignationAccessKind.Any && !rule.AccessKinds.HasFlag(member.AccessKind))
             {
                 return false;
             }
@@ -1333,6 +1445,7 @@ namespace RegionsAssignation.Editor
                 int priority,
                 string regionName,
                 RegionsAssignationMemberKind memberKinds,
+                RegionsAssignationAccessKind accessKinds,
                 bool matchOverrideMethods,
                 bool matchUnityLifecycleMethods,
                 string[] nameStartsWithTokens,
@@ -1344,6 +1457,7 @@ namespace RegionsAssignation.Editor
                 Priority = priority;
                 RegionName = regionName;
                 MemberKinds = memberKinds;
+                AccessKinds = accessKinds;
                 MatchOverrideMethods = matchOverrideMethods;
                 MatchUnityLifecycleMethods = matchUnityLifecycleMethods;
                 NameStartsWithTokens = nameStartsWithTokens;
@@ -1356,6 +1470,7 @@ namespace RegionsAssignation.Editor
             internal int Priority { get; }
             internal string RegionName { get; }
             internal RegionsAssignationMemberKind MemberKinds { get; }
+            internal RegionsAssignationAccessKind AccessKinds { get; }
             internal bool MatchOverrideMethods { get; }
             internal bool MatchUnityLifecycleMethods { get; }
             internal string[] NameStartsWithTokens { get; }

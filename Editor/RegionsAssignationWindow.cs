@@ -336,6 +336,9 @@ namespace RegionsAssignation.Editor
                     rule.MemberKinds = (RegionsAssignationMemberKind)EditorGUILayout.EnumFlagsField(
                         new GUIContent("Member Kinds"),
                         rule.MemberKinds);
+                    rule.AccessKinds = (RegionsAssignationAccessKind)EditorGUILayout.EnumFlagsField(
+                        new GUIContent("Access Kinds", "Filtro por modificador de acceso del miembro"),
+                        rule.AccessKinds);
 
                     EditorGUILayout.BeginHorizontal();
                     {
@@ -853,6 +856,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Main Events",
                     Priority = 100,
                     MemberKinds = RegionsAssignationMemberKind.Method,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = true,
                     MatchOverrideMethods = true,
                     NameStartsWith = string.Empty,
@@ -866,6 +870,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Main Events",
                     Priority = 90,
                     MemberKinds = RegionsAssignationMemberKind.Constructor,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -879,6 +884,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Events",
                     Priority = 20,
                     MemberKinds = RegionsAssignationMemberKind.Method,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = "On",
@@ -892,6 +898,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Properties",
                     Priority = 0,
                     MemberKinds = RegionsAssignationMemberKind.Property,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -905,6 +912,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Events Fields",
                     Priority = -5,
                     MemberKinds = RegionsAssignationMemberKind.Event,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -918,6 +926,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Fields",
                     Priority = -10,
                     MemberKinds = RegionsAssignationMemberKind.Field,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -931,6 +940,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Methods",
                     Priority = -20,
                     MemberKinds = RegionsAssignationMemberKind.Method,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -944,6 +954,7 @@ namespace RegionsAssignation.Editor
                     RegionName = "Nested Types",
                     Priority = -30,
                     MemberKinds = RegionsAssignationMemberKind.NestedType,
+                    AccessKinds = RegionsAssignationAccessKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
