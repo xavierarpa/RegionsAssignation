@@ -51,6 +51,7 @@ namespace RegionsAssignation.Editor
         [SerializeField] private bool showContentPanel = true;
         [SerializeField] private bool showOnlyChanged = true;
         [SerializeField] private bool showGeneratedPreview = true;
+        [SerializeField] private bool forceApply = false;
         [SerializeField] private List<RegionsAssignationRule> rules = new List<RegionsAssignationRule>();
 
         private List<RegionsAssignationScriptResult> results = new List<RegionsAssignationScriptResult>();
@@ -380,7 +381,7 @@ namespace RegionsAssignation.Editor
                     AnalyzeScripts();
                 }
 
-                GUI.enabled = results.Any(result => result.IsSuccess && result.HasChanges && result.IsSelected);
+                GUI.enabled = results.Any(result => result.IsSuccess && result.IsSelected && (result.HasChanges || forceApply));
                 if (GUILayout.Button("Apply Selected Changes", GUILayout.Height(30)))
                 {
                     ApplySelectedChanges();
@@ -408,7 +409,7 @@ namespace RegionsAssignation.Editor
             }
 
             int changedCount = results.Count(result => result.IsSuccess && result.HasChanges);
-            int selectedCount = results.Count(result => result.IsSuccess && result.HasChanges && result.IsSelected);
+            int selectedCount = results.Count(result => result.IsSuccess && (result.HasChanges || forceApply) && result.IsSelected);
             int invalidCount = results.Count(result => !result.IsSuccess);
 
             EditorGUILayout.Space(8);
@@ -427,6 +428,9 @@ namespace RegionsAssignation.Editor
 
                     showOnlyChanged = EditorGUILayout.ToggleLeft("Only Changed", showOnlyChanged, GUILayout.Width(110));
                     showGeneratedPreview = EditorGUILayout.ToggleLeft("Show Generated", showGeneratedPreview, GUILayout.Width(120));
+                    forceApply = EditorGUILayout.ToggleLeft(
+                        new GUIContent("Force Apply", "Permite seleccionar y aplicar archivos aunque no se detecten cambios"),
+                        forceApply, GUILayout.Width(100));
                 }
                 EditorGUILayout.EndHorizontal();
 
@@ -460,7 +464,7 @@ namespace RegionsAssignation.Editor
 
                         EditorGUILayout.BeginHorizontal();
                         {
-                            if (result.IsSuccess && result.HasChanges)
+                            if (result.IsSuccess && (result.HasChanges || forceApply))
                             {
                                 result.IsSelected = EditorGUILayout.Toggle(result.IsSelected, GUILayout.Width(18));
                             }
@@ -619,7 +623,7 @@ namespace RegionsAssignation.Editor
             for (int index = 0; index < results.Count; index++)
             {
                 RegionsAssignationScriptResult result = results[index];
-                if (!result.IsSuccess || !result.HasChanges || !result.IsSelected)
+                if (!result.IsSuccess || !result.IsSelected || (!result.HasChanges && !forceApply))
                 {
                     continue;
                 }
@@ -664,7 +668,7 @@ namespace RegionsAssignation.Editor
             var visible = new List<int>();
             for (int index = 0; index < results.Count; index++)
             {
-                if (showOnlyChanged && !(results[index].IsSuccess && results[index].HasChanges))
+                if (showOnlyChanged && !(results[index].IsSuccess && (results[index].HasChanges || forceApply)))
                 {
                     continue;
                 }
