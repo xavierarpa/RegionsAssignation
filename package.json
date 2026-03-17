@@ -1,0 +1,34 @@
+{
+  "name": "com.xavierarpa.regionsassignation",
+  "displayName": "Regions Assignation",
+  "version": "1.0.0",
+  "author": "Xavier Arpa",
+  "unity": "2020.3",
+  "documentation": "README.md",
+  "description": "Unity Editor tool that automatically organizes C# class members into #region blocks based on configurable priority rules. Supports fields, properties, methods, constructors, events, and nested types with real-time preview before applying changes.",
+  "keywords": [
+    "regions",
+    "code-organization",
+    "editor",
+    "tool",
+    "refactoring"
+  ],
+  "dependencies": {},
+  "samples": [
+    {
+      "displayName": "Playground Scripts",
+      "description": "Simple, Medium and UltraComplex test scripts to try the tool",
+      "path": "Playground"
+    }
+  ],
+  "license": "MIT",
+  "category": "Tools",
+  "repository": {
+    "url": "https://github.com/xavierarpa/RegionsAssignation.git",
+    "type": "git"
+  },
+  "bugs": {
+    "url": "https://github.com/xavierarpa/RegionsAssignation/issues"
+  },
+  "homepage": "https://github.com/xavierarpa/RegionsAssignation#readme"
+}
