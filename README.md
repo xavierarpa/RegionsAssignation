@@ -88,14 +88,6 @@ The tool ships with a sensible default preset:
 
 Use **Reset Defaults** to restore this preset at any time.
 
-## Samples
-
-The package includes 3 playground scripts for testing:
-
-- **Simple** (~80 lines) — Basic MonoBehaviour with fields, properties, methods, and events
-- **Medium** (~286 lines) — More complex script with generics, queues, dictionaries, and lifecycle methods
-- **UltraComplex** (~1450 lines) — Stress test with 90+ compute methods, 30+ event handlers, nested types, and context menu methods
-
 ## License
 
 [MIT](LICENSE)
