@@ -294,6 +294,7 @@ namespace RegionsAssignation.Editor
                     regionName,
                     rule.MemberKinds,
                     rule.AccessKinds,
+                    rule.ModifierKinds,
                     rule.MatchOverrideMethods,
                     rule.MatchUnityLifecycleMethods,
                     SplitTokens(rule.NameStartsWith),
@@ -544,6 +545,8 @@ namespace RegionsAssignation.Editor
 
             RegionsAssignationAccessKind accessKind = DetermineAccessKind(normalizedSignature);
 
+            RegionsAssignationModifierKind modifierKinds = DetermineModifierKinds(normalizedSignature);
+
             bool isOverride = ContainsWord(normalizedSignature, "override");
             bool isUnityLifecycleMethod = memberKind == RegionsAssignationMemberKind.Method &&
                                           IsUnityLifecycleMethod(memberName);
@@ -554,6 +557,7 @@ namespace RegionsAssignation.Editor
                 memberText,
                 memberKind,
                 accessKind,
+                modifierKinds,
                 memberName,
                 isOverride,
                 isUnityLifecycleMethod,
@@ -759,6 +763,73 @@ namespace RegionsAssignation.Editor
             }
 
             return RegionsAssignationAccessKind.Private;
+        }
+
+        private static RegionsAssignationModifierKind DetermineModifierKinds(string signature)
+        {
+            RegionsAssignationModifierKind result = RegionsAssignationModifierKind.None;
+
+            if (ContainsWord(signature, "static"))
+            {
+                result |= RegionsAssignationModifierKind.Static;
+            }
+
+            if (ContainsWord(signature, "abstract"))
+            {
+                result |= RegionsAssignationModifierKind.Abstract;
+            }
+
+            if (ContainsWord(signature, "virtual"))
+            {
+                result |= RegionsAssignationModifierKind.Virtual;
+            }
+
+            if (ContainsWord(signature, "sealed"))
+            {
+                result |= RegionsAssignationModifierKind.Sealed;
+            }
+
+            if (ContainsWord(signature, "extern"))
+            {
+                result |= RegionsAssignationModifierKind.Extern;
+            }
+
+            if (ContainsWord(signature, "async"))
+            {
+                result |= RegionsAssignationModifierKind.Async;
+            }
+
+            if (ContainsWord(signature, "readonly"))
+            {
+                result |= RegionsAssignationModifierKind.Readonly;
+            }
+
+            if (ContainsWord(signature, "volatile"))
+            {
+                result |= RegionsAssignationModifierKind.Volatile;
+            }
+
+            if (ContainsWord(signature, "const"))
+            {
+                result |= RegionsAssignationModifierKind.Const;
+            }
+
+            if (ContainsWord(signature, "new"))
+            {
+                result |= RegionsAssignationModifierKind.New;
+            }
+
+            if (ContainsWord(signature, "partial"))
+            {
+                result |= RegionsAssignationModifierKind.Partial;
+            }
+
+            if (ContainsWord(signature, "unsafe"))
+            {
+                result |= RegionsAssignationModifierKind.Unsafe;
+            }
+
+            return result;
         }
 
         private static string ExtractTrailingIdentifier(string signature, bool preferFirstVariable)
@@ -992,6 +1063,16 @@ namespace RegionsAssignation.Editor
             if (rule.AccessKinds != RegionsAssignationAccessKind.Any && !rule.AccessKinds.HasFlag(member.AccessKind))
             {
                 return false;
+            }
+
+            if (rule.ModifierKinds != RegionsAssignationModifierKind.Any
+                && rule.ModifierKinds != RegionsAssignationModifierKind.None)
+            {
+                if (member.ModifierKinds == RegionsAssignationModifierKind.None
+                    || (member.ModifierKinds & rule.ModifierKinds) == RegionsAssignationModifierKind.None)
+                {
+                    return false;
+                }
             }
 
             if (rule.MatchOverrideMethods || rule.MatchUnityLifecycleMethods)
@@ -1446,6 +1527,7 @@ namespace RegionsAssignation.Editor
                 string regionName,
                 RegionsAssignationMemberKind memberKinds,
                 RegionsAssignationAccessKind accessKinds,
+                RegionsAssignationModifierKind modifierKinds,
                 bool matchOverrideMethods,
                 bool matchUnityLifecycleMethods,
                 string[] nameStartsWithTokens,
@@ -1458,6 +1540,7 @@ namespace RegionsAssignation.Editor
                 RegionName = regionName;
                 MemberKinds = memberKinds;
                 AccessKinds = accessKinds;
+                ModifierKinds = modifierKinds;
                 MatchOverrideMethods = matchOverrideMethods;
                 MatchUnityLifecycleMethods = matchUnityLifecycleMethods;
                 NameStartsWithTokens = nameStartsWithTokens;
@@ -1471,6 +1554,7 @@ namespace RegionsAssignation.Editor
             internal string RegionName { get; }
             internal RegionsAssignationMemberKind MemberKinds { get; }
             internal RegionsAssignationAccessKind AccessKinds { get; }
+            internal RegionsAssignationModifierKind ModifierKinds { get; }
             internal bool MatchOverrideMethods { get; }
             internal bool MatchUnityLifecycleMethods { get; }
             internal string[] NameStartsWithTokens { get; }

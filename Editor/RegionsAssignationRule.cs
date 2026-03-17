@@ -32,6 +32,7 @@ namespace RegionsAssignation.Editor
         public int Priority;
         public RegionsAssignationMemberKind MemberKinds = RegionsAssignationMemberKind.Any;
         public RegionsAssignationAccessKind AccessKinds = RegionsAssignationAccessKind.Any;
+        public RegionsAssignationModifierKind ModifierKinds = RegionsAssignationModifierKind.Any;
         public bool MatchOverrideMethods;
         public bool MatchUnityLifecycleMethods;
         public string NameStartsWith = "";
