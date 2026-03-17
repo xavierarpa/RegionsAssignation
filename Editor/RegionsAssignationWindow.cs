@@ -339,6 +339,9 @@ namespace RegionsAssignation.Editor
                     rule.AccessKinds = (RegionsAssignationAccessKind)EditorGUILayout.EnumFlagsField(
                         new GUIContent("Access Kinds", "Filtro por modificador de acceso del miembro"),
                         rule.AccessKinds);
+                    rule.ModifierKinds = (RegionsAssignationModifierKind)EditorGUILayout.EnumFlagsField(
+                        new GUIContent("Modifier Kinds", "Filtro por modificadores del miembro (static, abstract, virtual, etc.)"),
+                        rule.ModifierKinds);
 
                     EditorGUILayout.BeginHorizontal();
                     {
@@ -857,6 +860,7 @@ namespace RegionsAssignation.Editor
                     Priority = 100,
                     MemberKinds = RegionsAssignationMemberKind.Method,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = true,
                     MatchOverrideMethods = true,
                     NameStartsWith = string.Empty,
@@ -871,6 +875,7 @@ namespace RegionsAssignation.Editor
                     Priority = 90,
                     MemberKinds = RegionsAssignationMemberKind.Constructor,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -885,6 +890,7 @@ namespace RegionsAssignation.Editor
                     Priority = 20,
                     MemberKinds = RegionsAssignationMemberKind.Method,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = "On",
@@ -899,6 +905,7 @@ namespace RegionsAssignation.Editor
                     Priority = 0,
                     MemberKinds = RegionsAssignationMemberKind.Property,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -913,6 +920,7 @@ namespace RegionsAssignation.Editor
                     Priority = -5,
                     MemberKinds = RegionsAssignationMemberKind.Event,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -927,6 +935,7 @@ namespace RegionsAssignation.Editor
                     Priority = -10,
                     MemberKinds = RegionsAssignationMemberKind.Field,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -941,6 +950,7 @@ namespace RegionsAssignation.Editor
                     Priority = -20,
                     MemberKinds = RegionsAssignationMemberKind.Method,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,
@@ -955,6 +965,7 @@ namespace RegionsAssignation.Editor
                     Priority = -30,
                     MemberKinds = RegionsAssignationMemberKind.NestedType,
                     AccessKinds = RegionsAssignationAccessKind.Any,
+                    ModifierKinds = RegionsAssignationModifierKind.Any,
                     MatchUnityLifecycleMethods = false,
                     MatchOverrideMethods = false,
                     NameStartsWith = string.Empty,

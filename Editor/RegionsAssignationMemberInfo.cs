@@ -29,6 +29,7 @@ namespace RegionsAssignation.Editor
             string sourceText,
             RegionsAssignationMemberKind kind,
             RegionsAssignationAccessKind accessKind,
+            RegionsAssignationModifierKind modifierKinds,
             string name,
             bool isOverride,
             bool isUnityLifecycleMethod,
@@ -37,6 +38,7 @@ namespace RegionsAssignation.Editor
             SourceText = sourceText;
             Kind = kind;
             AccessKind = accessKind;
+            ModifierKinds = modifierKinds;
             Name = name;
             IsOverride = isOverride;
             IsUnityLifecycleMethod = isUnityLifecycleMethod;
@@ -46,6 +48,7 @@ namespace RegionsAssignation.Editor
         internal string SourceText { get; }
         internal RegionsAssignationMemberKind Kind { get; }
         internal RegionsAssignationAccessKind AccessKind { get; }
+        internal RegionsAssignationModifierKind ModifierKinds { get; }
         internal string Name { get; }
         internal bool IsOverride { get; }
         internal bool IsUnityLifecycleMethod { get; }
