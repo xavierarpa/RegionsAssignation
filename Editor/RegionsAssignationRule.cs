@@ -31,6 +31,7 @@ namespace RegionsAssignation.Editor
         public string RegionName = "New Region";
         public int Priority;
         public RegionsAssignationMemberKind MemberKinds = RegionsAssignationMemberKind.Any;
+        public RegionsAssignationAccessKind AccessKinds = RegionsAssignationAccessKind.Any;
         public bool MatchOverrideMethods;
         public bool MatchUnityLifecycleMethods;
         public string NameStartsWith = "";
