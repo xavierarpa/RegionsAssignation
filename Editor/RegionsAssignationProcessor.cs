@@ -675,23 +675,23 @@ namespace RegionsAssignation.Editor
             }
 
             string beforeParen = signature.Substring(0, parenthesisIndex).Trim();
-            bool isLeadingTuple = beforeParen.Length == 0;
+            bool isTupleReturnType = beforeParen.Length == 0;
 
-            if (!isLeadingTuple)
+            if (!isTupleReturnType)
             {
                 string[] tokens = beforeParen.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                isLeadingTuple = tokens.Length > 0;
+                isTupleReturnType = tokens.Length > 0;
                 for (int index = 0; index < tokens.Length; index++)
                 {
                     if (!csharpModifiers.Contains(tokens[index]))
                     {
-                        isLeadingTuple = false;
+                        isTupleReturnType = false;
                         break;
                     }
                 }
             }
 
-            if (!isLeadingTuple)
+            if (!isTupleReturnType)
             {
                 return parenthesisIndex;
             }
